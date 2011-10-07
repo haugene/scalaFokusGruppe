@@ -5,11 +5,10 @@ package no.capgemini.tradesim
  */
 object App {
   
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
+  // Welcome to our Hello World!
   
   def main(args : Array[String]) {
     println( "Hello World!" )
-    println("concat arguments = " + foo(args))
   }
 
 }
