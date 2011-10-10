@@ -6,7 +6,7 @@ package no.capgemini.tradesim
 object App {
   
   // Welcome to our Hello World!
-  
+  // This is a test comment.
   def main(args : Array[String]) {
     println( "Hello World!" )
   }
