@@ -1,0 +1,1 @@
+Simple app to simulate trading in towns. Producers and consumers trade by putting Orders in the Market. A special type of Actor called Agent will be able to trade between Markets and the competition should be between Agents to have the best logic.
