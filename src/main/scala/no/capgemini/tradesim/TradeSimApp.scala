@@ -1,13 +1,14 @@
 package no.capgemini.tradesim
 
-/**
- * @author ${user.name}
- */
 object App {
   
-  // Welcome to our Hello World!
-  // This is a test comment.
+  /*
+   * The main method, will instantiate Markets(just one in the beginning).
+   */
   def main(args : Array[String]) {
+    
+    // Starts it all
+    new Market();
     println( "Hello World!" )
   }
 
