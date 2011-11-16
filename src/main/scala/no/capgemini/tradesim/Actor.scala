@@ -1,5 +1,5 @@
 package no.capgemini.tradesim
 
-trait Actor {
-
+abstract class Actor(val market : Market) {
+	def createOrder(): Order
 }
