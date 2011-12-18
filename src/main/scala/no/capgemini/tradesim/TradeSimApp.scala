@@ -27,6 +27,7 @@ object App {
 
     while (iteration < iterationLimit) {
    	 iteration += 1;
+   	 
    	 /*
    	  * TODO: For each actor, add order to actor's market
    	  */
