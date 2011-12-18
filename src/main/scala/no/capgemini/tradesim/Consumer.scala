@@ -3,11 +3,11 @@ package no.capgemini.tradesim
 import scala.Math
 import scala.util.Random
 
-class Consumer(market : Market) extends Actor(market) {
+class Consumer(market : Market, consumes : Goods.Goods, basePrice: Integer) extends Actor(market) {
 	def createOrder() : Order = {
-	  val goods = Random.shuffle(Goods.values).first
-	  val price = (Math.random*100).toInt
+	  val goods = this.consumes
+	  val price = this.basePrice;
 	  val validTime = 1;
-	  return new Order(goods, price, validTime)
+	  return new BuyingOrder(this, goods, price, 1, validTime)
 	}
 }

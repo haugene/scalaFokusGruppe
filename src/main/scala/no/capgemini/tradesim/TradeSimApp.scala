@@ -1,4 +1,5 @@
 package no.capgemini.tradesim
+import scala.util.Random
 
 object App {
   
@@ -11,11 +12,12 @@ object App {
     var markets = List(firstMarket)
     
     var actors = List(
-      new Consumer(firstMarket),
-      new Consumer(firstMarket),
-      new Producer(firstMarket, Goods.Grain),
-      new Producer(firstMarket, Goods.Potato));
+      new Consumer(firstMarket, Goods.Grain, 5),
+      new Consumer(firstMarket, Goods.Potato, 10),
+      new Producer(firstMarket, Goods.Grain, 5),
+      new Producer(firstMarket, Goods.Potato, 10));
     
+    actors= Random.shuffle(actors);
     
     var iteration = 0;
     

@@ -1,29 +1,29 @@
 package no.capgemini.tradesim
 
 import scala.collection.mutable.Set;
+import scala.collection.mutable.Map;
 
 class Market {
   /* 
-   * Orders must be unique with respect to Actor and Goods.
-   * Maybe implement Map with (Actor, Goods) tuple?
    */
-	var sellingOrders = Set[SellingOrder]()
-	var buyingOrders = Set[BuyingOrder]()
+	var sellingOrders = Map[(Actor, Goods.Goods),SellingOrder]()
+	var buyingOrders = Map[(Actor, Goods.Goods),BuyingOrder]()
 	
 	def addOrder(o: Order) {
 	  if (o.isInstanceOf[SellingOrder]) {
-	    sellingOrders += o.asInstanceOf[SellingOrder];
+	    sellingOrders.put((o.actor, o.goods), o.asInstanceOf[SellingOrder]);
+	    //matchBuyingOrders(o.asInstanceOf[SellingOrder]);
 	  } else if (o.isInstanceOf[BuyingOrder]) {
-	    buyingOrders += o.asInstanceOf[BuyingOrder];
+	    buyingOrders.put((o.actor, o.goods), o.asInstanceOf[BuyingOrder]);
 	  }
 	}
 	
 	def addSellingOrder(s: SellingOrder) {
-	  sellingOrders += s
+	    sellingOrders.put((s.actor, s.goods), s);
 	}
 	
 	def addBuyingOrder(b : BuyingOrder) {
-	  buyingOrders += b
+	    buyingOrders.put((b.actor, b.goods), b);
 	}
 	
 	
