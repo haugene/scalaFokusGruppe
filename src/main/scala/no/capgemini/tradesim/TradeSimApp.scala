@@ -1,6 +1,7 @@
 package no.capgemini.tradesim
 import scala.util.Random
 
+
 object App {
   
   /*
@@ -8,14 +9,18 @@ object App {
    */
   def main(args : Array[String]) {
     
-    val firstMarket = new Market
-    var markets = List(firstMarket)
+    val oslo = new Market("Oslo", 60);
+    val bergen = new Market("Bergen", 30);
+    val trondheim = new Market("Trondheim", 25);
+    val stavanger = new Market("Stavanger", 15);
+
+    var markets = List(oslo, bergen, trondheim, stavanger);
     
     var actors = List(
-      new Consumer(firstMarket, Goods.Grain, 5),
-      new Consumer(firstMarket, Goods.Potato, 10),
-      new Producer(firstMarket, Goods.Grain, 5),
-      new Producer(firstMarket, Goods.Potato, 10));
+      new Producer(oslo, 0, Goods.Potato, 5),
+      new Producer(bergen, 0, Goods.Fish, 10),
+      new Producer(trondheim, 0, Goods.Grain, 10),
+      new Producer(stavanger, 0, Goods.Beef, 10));
     
     actors= Random.shuffle(actors);
     
