@@ -13,17 +13,37 @@ class Market(var name: String, var population: Integer) {
     if (o.isInstanceOf[SellingOrder]) {
       
       var s = matchBuyingOrders(o.asInstanceOf[SellingOrder]);
-      if (s.amount >0 ) {
-    	  sellingOrders += o.asInstanceOf[SellingOrder];
+      if (s.amount >0 && s.validTime > 0) {
+          addAndOverwriteSellingOrder(o.asInstanceOf[SellingOrder])
+    	  //sellingOrders += o.asInstanceOf[SellingOrder];
         
       }
     } else if (o.isInstanceOf[BuyingOrder]) {
       var s = matchSellingOrders(o.asInstanceOf[BuyingOrder]);
-      if (s.amount >0 ) {
-    	  buyingOrders += o.asInstanceOf[BuyingOrder];
+      if (s.amount >0 && s.validTime > 0) {
+    	  //buyingOrders += o.asInstanceOf[BuyingOrder];
+        addAndOverwriteBuyingOrder(o.asInstanceOf[BuyingOrder])
         
       }
     }
+  }
+  
+  def addAndOverwriteSellingOrder(order: SellingOrder) {
+    sellingOrders.foreach(oldOrder => {
+      if (oldOrder.agent == order.agent && oldOrder.goods == order.goods) {
+    	  sellingOrders -= oldOrder
+      }
+    })
+    sellingOrders += order
+  }
+
+  def addAndOverwriteBuyingOrder(order: BuyingOrder) {
+    buyingOrders.foreach(oldOrder => {
+      if (oldOrder.agent == order.agent && oldOrder.goods == order.goods) {
+    	  buyingOrders -= oldOrder
+      }
+    })
+    buyingOrders += order
   }
 
   /**
