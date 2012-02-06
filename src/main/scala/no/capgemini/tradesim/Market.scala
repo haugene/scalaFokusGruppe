@@ -10,6 +10,9 @@ class Market(var name: String, var population: Integer) {
   var consumers= ListBuffer[Consumer]()
 
   def addOrder(o: Order) {
+	if (o.price < 0 || o.amount <= 0) {
+	  return
+	} 
     if (o.isInstanceOf[SellingOrder]) {
       
       var s = matchBuyingOrders(o.asInstanceOf[SellingOrder]);

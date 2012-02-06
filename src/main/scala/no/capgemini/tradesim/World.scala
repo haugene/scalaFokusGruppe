@@ -24,7 +24,8 @@ class World (var markets : Set[Market], var agents : ListBuffer[Agent]){
   
   def produce(currentTurn: Int) {
     markets.foreach(market => {
-      market.producers.foreach(producer => {
+      var producers = Random.shuffle(market.producers)
+      producers.foreach(producer => {
         placeOrders(producer.createOrders(currentTurn))
       })
       System.out.println(market.name+ " current selling orders "+market.sellingOrders.size);
@@ -42,7 +43,8 @@ class World (var markets : Set[Market], var agents : ListBuffer[Agent]){
   
   def consume(currentTurn: Int) {
     markets.foreach(market => {
-      market.consumers.foreach(consumer => {
+      var consumers = Random.shuffle(market.consumers)
+      consumers.foreach(consumer => {
         placeOrders(consumer.createOrders(currentTurn))
       })
     })
