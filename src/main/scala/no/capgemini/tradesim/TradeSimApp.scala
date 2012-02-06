@@ -14,7 +14,7 @@ object App {
     val trondheim = new Market("Trondheim", 250);
     val stavanger = new Market("Stavanger", 150);
     
-    var markets = Map((oslo, oslo), (bergen, bergen), (trondheim, trondheim), (stavanger, stavanger));
+    var markets = Set(oslo, bergen, trondheim, stavanger)
     
     oslo.producers += new Producer(oslo, 0, "Oslo Potatoes", Goods.Potato, 5)
     bergen.producers += new Producer(bergen, 0, "Bergen Fish", Goods.Fish, 10)

@@ -7,7 +7,7 @@ class Trader(cash: Double, name: String) extends Agent(cash, name) {
   def createOrders(currentTime: Int): ListBuffer[Order] = {
     val shuffledMarkets = Random.shuffle(World.currentWorld.markets.toList)
     
-    val market = shuffledMarkets(0)._2
+    val market = shuffledMarkets(0)
     
     val foundOrder = market.sellingOrders(0)
     val buyingPrice = foundOrder.price

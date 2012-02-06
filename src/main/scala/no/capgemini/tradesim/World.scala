@@ -7,7 +7,7 @@ object World {
   var currentWorld : World = null
 }
 
-class World (var markets : Map[Market, Market], var agents : ListBuffer[Agent]){
+class World (var markets : Set[Market], var agents : ListBuffer[Agent]){
   var currentTurn = 0
   def run(turns : Int) = {
     World.currentWorld = this
@@ -23,11 +23,11 @@ class World (var markets : Map[Market, Market], var agents : ListBuffer[Agent]){
   }
   
   def produce(currentTurn: Int) {
-    markets.foreach(marketTuple => {
-      marketTuple._2.producers.foreach(producer => {
+    markets.foreach(market => {
+      market.producers.foreach(producer => {
         placeOrders(producer.createOrders(currentTurn))
       })
-      System.out.println(marketTuple._2.name+ " current selling orders "+marketTuple._2.sellingOrders.size);
+      System.out.println(market.name+ " current selling orders "+market.sellingOrders.size);
     })
     
   }
@@ -41,8 +41,8 @@ class World (var markets : Map[Market, Market], var agents : ListBuffer[Agent]){
   }
   
   def consume(currentTurn: Int) {
-    markets.foreach(marketTuple => {
-      marketTuple._2.consumers.foreach(consumer => {
+    markets.foreach(market => {
+      market.consumers.foreach(consumer => {
         placeOrders(consumer.createOrders(currentTurn))
       })
     })
@@ -52,8 +52,7 @@ class World (var markets : Map[Market, Market], var agents : ListBuffer[Agent]){
   
   def placeOrders(orders: ListBuffer[Order]) {
     orders.foreach(order => {
-      val market = markets.get(order.market).get
-      market.addOrder(order)
+      order.market.addOrder(order)
     })
   }
  
