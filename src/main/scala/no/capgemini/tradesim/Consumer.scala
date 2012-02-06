@@ -1,13 +1,16 @@
 package no.capgemini.tradesim
 
-import scala.Math
-import scala.util.Random
+import scala.collection.mutable.ListBuffer
 
-class Consumer(market : Market, cash: Double, consumes : Goods.Goods, basePrice: Double) extends Actor(market, cash) {
-	def createOrder() : Order = {
-	  val goods = this.consumes
-	  val price = this.basePrice;
-	  val validTime = 1;
-	  return new BuyingOrder(this, goods, price, 1, validTime)
+class Consumer(market : Market, cash: Double, name: String) extends Agent(cash, name) {
+	def createOrders(currentTime: Int) : ListBuffer[Order] = {
+	  val validTime = 0;
+	  var orderList = ListBuffer[Order]()
+      Goods.values.foreach(goods => {
+        orderList+= new BuyingOrder(market, this, goods, cash/Goods.values.size, market.population, validTime, currentTime)
+
+      })
+	  
+	  return orderList
 	}
 }

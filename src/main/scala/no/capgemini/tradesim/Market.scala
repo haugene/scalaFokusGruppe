@@ -1,19 +1,16 @@
 package no.capgemini.tradesim
 
-import scala.collection.mutable.Set
-import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
-import no.capgemini.tradesim.SellingOrder
 
-class Market(name: String, population: Integer) {
+
+class Market(var name: String, var population: Integer) {
   var sellingOrders = ListBuffer[SellingOrder]()
   var buyingOrders = ListBuffer[BuyingOrder]()
-  var actors = ListBuffer[Actor]()
-  var demand = Map[Goods.Goods, Int]()
+  var producers= ListBuffer[Producer]()
+  var consumers= ListBuffer[Consumer]()
 
   def addOrder(o: Order) {
     if (o.isInstanceOf[SellingOrder]) {
-      System.out.println("Adding selling order "+o.goods+" "+o.amount+" "+o.price);
       
       var s = matchBuyingOrders(o.asInstanceOf[SellingOrder]);
       if (s.amount >0 ) {
@@ -21,60 +18,56 @@ class Market(name: String, population: Integer) {
         
       }
     } else if (o.isInstanceOf[BuyingOrder]) {
-      System.out.println("Adding buying order "+o.goods+" "+o.amount+" "+o.price);
-      buyingOrders += o.asInstanceOf[BuyingOrder];
+      var s = matchSellingOrders(o.asInstanceOf[BuyingOrder]);
+      if (s.amount >0 ) {
+    	  buyingOrders += o.asInstanceOf[BuyingOrder];
+        
+      }
     }
   }
 
-//  def addSellingOrder(s: SellingOrder) {
-//    sellingOrders += s;
-//  }
-//
-//  def addBuyingOrder(b: BuyingOrder) {
-//    buyingOrders += b;
-//  }
-
+  /**
+   * TODO: Needs a proper rewrite
+   */
   def matchBuyingOrders(s: SellingOrder) : SellingOrder = {
     //Do this with an iterator or something instead
     var buyingOrdersToRemove = ListBuffer[BuyingOrder]()
     var i=1
-    System.out.println("Size of buying orders: "+buyingOrders.size);
     for (buyingOrder <- buyingOrders) {
-      System.out.println("loop no: "+i)
-      if (buyingOrder.goods == s.goods && s.amount > 0 && buyingOrder.price <= s.price) {
+      if (buyingOrder.goods == s.goods && s.amount > 0 && buyingOrder.price >= s.price) {
         if (s.amount >= buyingOrder.amount) {
-          System.out.println("Whole buying order matches")
           var transactionAmount = buyingOrder.amount
           var transactionPrice = buyingOrder.price
           var transactionTotal = transactionAmount * transactionPrice
 
-          var buyer = buyingOrder.actor
-          var seller = s.actor
+          var buyer = buyingOrder.agent
+          var seller = s.agent
 
           buyer.cash -= transactionTotal
           seller.cash += transactionTotal
 
-          seller.goods.put(s.goods, seller.goods.get(s.goods).get - s.amount)
-          buyer.goods.put(s.goods, buyer.goods.get(s.goods).get + s.amount)
+          seller.goods.put(s.goods, seller.goods.get(s.goods).getOrElse(0) - transactionAmount)
+          buyer.goods.put(s.goods, buyer.goods.get(s.goods).getOrElse(0) + transactionAmount)
 
           s.amount -= transactionAmount
+          buyingOrder.amount -= transactionAmount
           buyingOrdersToRemove += buyingOrder
 
         } else {
-          System.out.println("Whole selling order matches")
           var transactionAmount = s.amount
           var transactionPrice = buyingOrder.price
           var transactionTotal = transactionAmount * transactionPrice
 
-          var buyer = buyingOrder.actor
-          var seller = s.actor
+          var buyer = buyingOrder.agent
+          var seller = s.agent
 
           buyer.cash -= transactionTotal
           seller.cash += transactionTotal
 
-          seller.goods.put(s.goods, seller.goods.get(s.goods).get - s.amount)
-          buyer.goods.put(s.goods, buyer.goods.get(s.goods).get + s.amount)
+          seller.goods.put(s.goods, seller.goods.get(s.goods).getOrElse(0) - transactionAmount)
+          buyer.goods.put(s.goods, buyer.goods.get(s.goods).getOrElse(0) + transactionAmount)
 
+          buyingOrder.amount -= transactionAmount
           s.amount -= transactionAmount
         }
       }
@@ -86,6 +79,58 @@ class Market(name: String, population: Integer) {
     return s
   }
 
+  /**
+   * TODO: Needs a proper rewrite
+   */
+  def matchSellingOrders(b: BuyingOrder) : BuyingOrder = {
+    //Do this with an iterator or something instead
+    var sellingOrdersToRemove = ListBuffer[SellingOrder]()
+    var i=1
+    for (sellingOrder <- sellingOrders) {
+      if (sellingOrder.goods == b.goods && b.amount > 0 && sellingOrder.price <= b.price) {
+        if (b.amount >= sellingOrder.amount) {
+          var transactionAmount = sellingOrder.amount
+          var transactionPrice = sellingOrder.price
+          var transactionTotal = transactionAmount * transactionPrice
+
+          var seller = sellingOrder.agent
+          var buyer = b.agent
+
+          buyer.cash -= transactionTotal
+          seller.cash += transactionTotal
+
+          seller.goods.put(b.goods, seller.goods.get(b.goods).getOrElse(0) - transactionAmount)
+          buyer.goods.put(b.goods, buyer.goods.get(b.goods).getOrElse(0) + transactionAmount)
+
+          b.amount -= transactionAmount
+          sellingOrder.amount -= transactionAmount
+          sellingOrdersToRemove += sellingOrder
+
+        } else {
+          var transactionAmount = b.amount
+          var transactionPrice = sellingOrder.price
+          var transactionTotal = transactionAmount * transactionPrice
+
+          var seller = sellingOrder.agent
+          var buyer = b.agent
+
+          buyer.cash -= transactionTotal
+          seller.cash += transactionTotal
+
+          seller.goods.put(b.goods, seller.goods.get(b.goods).getOrElse(0) - transactionAmount)
+          buyer.goods.put(b.goods, buyer.goods.get(b.goods).getOrElse(0) + transactionAmount)
+
+          sellingOrder.amount -= transactionAmount
+          b.amount -= transactionAmount
+        }
+      }
+    }
+    for (sellingOrder <- sellingOrdersToRemove) {
+      sellingOrders -= sellingOrder
+    }
+    
+    return b
+  }
 }
 	
 	
