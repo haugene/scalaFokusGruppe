@@ -9,7 +9,7 @@ class Producer(market : Market, cash: Double, name: String, produces : Goods.Goo
 	  val goods = this.produces
 	  val price = this.basePrice
 	  val validTime = 1
-	  return ListBuffer[Order](new SellingOrder(market, this, goods, price, market.population/2, validTime, currentTime))
+	  return ListBuffer[Order](new SellingOrder(market, this, goods, price, market.population+10, validTime, currentTime))
 	}
 	
 }

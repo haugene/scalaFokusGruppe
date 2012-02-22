@@ -217,6 +217,70 @@ class MarketTest {
     }
 
     /**
+	 * Add two buying orders, then a selling order that matches both. 
+	 * Check that the trade has been performed and nothing remains.
+	 */
+    @Test
+    def testMatchingTwoBuyingOneSelling() = {
+      var market = new Market("Oslo", 100)
+      var seller = new Trader(100.0, "seller")
+      seller.goods.put(Goods.Grain, 20)
+      var buyer = new Trader(400.0, "buyer1")
+      var buyer2 = new Trader(400.0, "buyer2")
+      
+      var buyingOrder = new BuyingOrder(market, buyer, Goods.Grain, 10.0, 5, 1, 0)
+      var buyingOrder2 = new BuyingOrder(market, buyer2, Goods.Grain, 10.0, 7, 1, 0)
+      market.addOrder(buyingOrder)
+      market.addOrder(buyingOrder2)
+      
+      var sellingOrder = new SellingOrder(market, seller, Goods.Grain, 10.0, 12, 1, 0)
+      market.addOrder(sellingOrder)
+      
+      assertEquals(0, market.sellingOrders.size)
+      assertEquals(0, market.buyingOrders.size)
+      
+      assertEquals(220.0, seller.cash, 0.001)
+      assertEquals(350.0, buyer.cash, 0.001)
+      assertEquals(330.0, buyer2.cash, 0.001)
+      
+      assertEquals(8, seller.goods.get(Goods.Grain).get)
+      assertEquals(5, buyer.goods.get(Goods.Grain).get)
+      assertEquals(7, buyer2.goods.get(Goods.Grain).get)
+    }
+
+    /**
+	 * Add two buying orders, then a selling order that matches the first and half the second. 
+	 * Check that the trade has been performed and only half the second buying order remains.
+	 */
+    @Test
+    def testTwoBuyingOneSellingPartiallyMatching() = {
+      var market = new Market("Oslo", 100)
+      var seller = new Trader(100.0, "seller")
+      seller.goods.put(Goods.Grain, 20)
+      var buyer = new Trader(400.0, "buyer1")
+      var buyer2 = new Trader(400.0, "buyer2")
+      
+      var buyingOrder = new BuyingOrder(market, buyer, Goods.Grain, 10.0, 5, 1, 0)
+      var buyingOrder2 = new BuyingOrder(market, buyer2, Goods.Grain, 10.0, 10, 1, 0)
+      market.addOrder(buyingOrder)
+      market.addOrder(buyingOrder2)
+      
+      var sellingOrder = new SellingOrder(market, seller, Goods.Grain, 10.0, 10, 1, 0)
+      market.addOrder(sellingOrder)
+      
+      assertEquals(0, market.sellingOrders.size)
+      assertEquals(1, market.buyingOrders.size)
+      assertEquals(5, market.buyingOrders(0).amount)
+      
+      assertEquals(200.0, seller.cash, 0.001)
+      assertEquals(350.0, buyer.cash, 0.001)
+      assertEquals(350.0, buyer2.cash, 0.001)
+      
+      assertEquals(10, seller.goods.get(Goods.Grain).get)
+      assertEquals(5, buyer.goods.get(Goods.Grain).get)
+      assertEquals(5, buyer2.goods.get(Goods.Grain).get)
+    }
+    /**
 	 * Add a buying order, then a selling order with a lower price. 
 	 * Check that the trade has been performed at the higher price.
 	 */
